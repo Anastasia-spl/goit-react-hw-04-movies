@@ -1,0 +1,14 @@
+.addInfoLink {
+  text-decoration: none;
+  font-size: 18px;
+  color: #234b31;
+  &:not(:last-of-type) {
+    margin-right: 10px;
+  }
+  &__active {
+    text-decoration: underline;
+  }
+}
+.addInfoTitle {
+  font-size: 20px;
+}
