@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Navigation from './components/Navigation';
 import Main from './components/Main';
 import Section from './components/Section';
+import Page404 from './components/Page404';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
                     key={path}
                   />
                 ))}
+                <Route component={Page404} />
               </Switch>
             </Suspense>
           </Container>

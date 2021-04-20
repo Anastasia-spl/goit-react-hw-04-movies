@@ -9,12 +9,15 @@ import MoviesList from '../../components/MoviesList';
 class HomePage extends Component {
   state = {
     movies: null,
+    error: null,
   };
 
   async componentDidMount() {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/trending/movie/day?api_key=${variables.ApiKey}`,
-    );
+    const response = await axios
+      .get(
+        `https://api.themoviedb.org/3/trending/movie/day?api_key=${variables.ApiKey}`,
+      )
+      .catch(error => this.setState({ error }));
     const moviesArray = response.data.results;
     this.setState({ movies: moviesArray });
   }

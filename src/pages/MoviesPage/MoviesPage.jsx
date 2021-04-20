@@ -12,18 +12,16 @@ class MoviesPage extends Component {
   state = {
     query: '',
     requestedMovies: null,
+    error: null,
   };
 
   componentDidMount() {
-    const { location } = this.props;
-    const parsedPrevSearch = queryString.parse(location.search);
-    this.setState({ query: parsedPrevSearch.query });
-  }
-
-  componentDidUpdate() {
-    const { query } = this.state;
-    if (query) {
-      this.makeRequest();
+    const { search } = this.props.location;
+    const parsedPrevSearch = queryString.parse(search);
+    const prevQuery = parsedPrevSearch.query;
+    this.setState({ query: prevQuery });
+    if (prevQuery) {
+      this.makeRequest(prevQuery);
     }
   }
 
@@ -36,18 +34,21 @@ class MoviesPage extends Component {
     const { query } = this.state;
     const { history } = this.props;
 
-    query && this.makeRequest();
+    query && this.makeRequest(query);
 
     history.push({
       search: `?query=${query}`,
     });
+
+    this.setState({ query: '' });
   };
 
-  makeRequest = async () => {
-    const { query } = this.state;
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=${variables.ApiKey}&query=${query}`,
-    );
+  makeRequest = async query => {
+    const response = await axios
+      .get(
+        `https://api.themoviedb.org/3/search/movie?api_key=${variables.ApiKey}&query=${query}`,
+      )
+      .catch(error => this.setState({ error }));
     const moviesArray = response.data.results;
     this.setState({ requestedMovies: moviesArray });
   };
