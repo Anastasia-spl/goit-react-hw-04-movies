@@ -1,8 +1,7 @@
 import { Component } from 'react';
-import axios from 'axios';
+import moviesApi from '../../moviesApi';
 import PropTypes from 'prop-types';
 
-import variables from '../../variables';
 import Container from '../../components/Container';
 import MoviesList from '../../components/MoviesList';
 
@@ -13,13 +12,10 @@ class HomePage extends Component {
   };
 
   async componentDidMount() {
-    const response = await axios
-      .get(
-        `https://api.themoviedb.org/3/trending/movie/day?api_key=${variables.ApiKey}`,
-      )
+    moviesApi
+      .popularMovieFetch()
+      .then(movies => this.setState({ movies }))
       .catch(error => this.setState({ error }));
-    const moviesArray = response.data.results;
-    this.setState({ movies: moviesArray });
   }
 
   render() {

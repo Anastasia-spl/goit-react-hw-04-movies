@@ -1,12 +1,9 @@
 import { Component } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
-
+import moviesApi from '../../moviesApi';
 import queryString from 'query-string';
-import variables from '../../variables';
-import Button from '../../components/Button';
+import SearchForm from '../../components/SearchForm';
 import MoviesList from '../../components/MoviesList';
-import styles from './MoviesPage.module.scss';
 
 class MoviesPage extends Component {
   state = {
@@ -21,7 +18,10 @@ class MoviesPage extends Component {
     const prevQuery = parsedPrevSearch.query;
     this.setState({ query: prevQuery });
     if (prevQuery) {
-      this.makeRequest(prevQuery);
+      moviesApi
+        .requestedMoviesFetch(prevQuery)
+        .then(moviesArray => this.setState({ requestedMovies: moviesArray }))
+        .catch(error => this.setState({ error }));
     }
   }
 
@@ -34,7 +34,11 @@ class MoviesPage extends Component {
     const { query } = this.state;
     const { history } = this.props;
 
-    query && this.makeRequest(query);
+    query &&
+      moviesApi
+        .requestedMoviesFetch(query)
+        .then(moviesArray => this.setState({ requestedMovies: moviesArray }))
+        .catch(error => this.setState({ error }));
 
     history.push({
       search: `?query=${query}`,
@@ -43,29 +47,16 @@ class MoviesPage extends Component {
     this.setState({ query: '' });
   };
 
-  makeRequest = async query => {
-    const response = await axios
-      .get(
-        `https://api.themoviedb.org/3/search/movie?api_key=${variables.ApiKey}&query=${query}`,
-      )
-      .catch(error => this.setState({ error }));
-    const moviesArray = response.data.results;
-    this.setState({ requestedMovies: moviesArray });
-  };
-
   render() {
     const { query, requestedMovies } = this.state;
     return (
       <>
-        <form className={styles.searchForm} onSubmit={this.handleSubmit}>
-          <input
-            className={styles.searchInput}
-            type="text"
-            onChange={this.handleChange}
-            value={query}
-          />
-          <Button type="submit">Search</Button>
-        </form>
+        <SearchForm
+          query={query}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
+
         {requestedMovies && (
           <MoviesList
             movies={requestedMovies}
