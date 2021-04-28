@@ -1,21 +1,18 @@
 import { Component } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
-
-import variables from '../../variables';
+import moviesApi from '../../moviesApi';
 
 class Cast extends Component {
   state = {
     cast: [],
+    error: null,
   };
   async componentDidMount() {
     const { movieId } = this.props.match.params;
-
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${variables.ApiKey}`,
-    );
-
-    this.setState({ cast: response.data.cast });
+    moviesApi
+      .castFetch(movieId)
+      .then(cast => this.setState({ cast }))
+      .catch(error => this.setState({ error }));
   }
 
   componentDidUpdate() {

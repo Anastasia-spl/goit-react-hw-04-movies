@@ -23,4 +23,15 @@ const popularMovieFetch = async () => {
     ).then(response => response.data.results);
 }
 
-export default {requestedMoviesFetch, movieDetailsFetch, popularMovieFetch}
+const castFetch = async (movieId) => {
+  return await axios.get(
+      `/movie/${movieId}/credits?api_key=${variables.ApiKey}`).then(response => response.data.cast);
+}
+
+const reviewsFetch = async (movieId) => {
+  return await axios.get(
+      `/movie/${movieId}/reviews?api_key=${variables.ApiKey}`,
+    ).then(response => response.data.results);
+}
+
+export default {requestedMoviesFetch, movieDetailsFetch, popularMovieFetch, castFetch, reviewsFetch}
